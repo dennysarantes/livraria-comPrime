@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+	<ui:composition template="_template.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="autorId" value="#{autorBean.autorId}"/>
+		<f:viewAction action="#{autorBean.carregarAutorPelaId}" if="#{param.autorId != null}" />
+	</f:metadata>
+	
+	<ui:define name="titulo">
+	Novo Autor
+	</ui:define>
+	
+	<ui:define name="conteudo">
+	
+		<h:form>
+			<fieldset>
+				<legend>Dados do Autor</legend>
+				<h:message for="nome"/>
+				<h:panelGrid columns="2">
+					
+					<h:outputLabel value="Nome:" for="nome" />
+					<h:inputText id="nome" value="#{autorBean.autor.nome}" required="true" 
+					requiredMessage="**Nome é obrigatório" validatorMessage="**Tamanho mín do nome é de 5 caracteres">
+					<f:validateLength minimum="5"/>					
+					</h:inputText>
+					
+					
+					<h:outputLabel value="Email:" for="email" />
+					<h:inputText  id="email" value="#{autorBean.autor.email}">
+					<f:passThroughAttribute name="type" value="email"/>
+					</h:inputText>					
+					<h:message for="email" id="messageErrorEmail"/>
+					
+					<h:commandButton value="Gravar" action="#{autorBean.gravar}" />
+				</h:panelGrid>
+			</fieldset>
+		</h:form>
+		<h:form id="formListaTodosLivros">
+	<fieldset>
+		<legend>Todos os autores já cadastrados</legend>
+		<h:dataTable value="#{autorBean.autores}" var="autor" id="tabelaAutores">
+			<h:column>
+				<f:facet name="header">Nome</f:facet>
+				<h:outputText value="#{autor.nome}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Editar</f:facet>
+				<h:commandLink value="editar" action="#{autorBean.carregaAutor(autor)}"/>
+			</h:column>
+			<h:column>
+				<f:facet name="header">Excluir</f:facet>
+				<h:commandLink value="excluir" action="#{autorBean.excluir(autor)}"/>
+			</h:column>
+		</h:dataTable>
+	</fieldset>
+	</h:form>
+	
+	</ui:define>
+	</ui:composition>
+</html>
