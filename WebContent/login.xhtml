@@ -6,38 +6,70 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-<ui:composition template="_template.xhtml">
+	<ui:composition template="_template.xhtml">
 
-	<ui:define name="titulo">
-	 
-	</ui:define>
+		<ui:define name="titulo">
+	 	</ui:define>
 	
-	<ui:define name="conteudo">
-	
-		<h:form id="login">
-		<p:messages id="login"/>
-			<p:fieldset legend="login">
-				<h:panelGrid columns="2">
+	<ui:define name="conteudoLogin">
+	<h:form>
+	 <div class="p-grid">
+        <div class="p-col-5 p-d-flex p-ai-center p-jc-center">
+            <div class="ui-fluid">
+					<div class="p-field">
+						<p:outputLabel value="Email:" for="email" />
+						<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+							required="true" requiredMessage="**Email é obrigatório">
+							<f:passThroughAttribute name="type" value="email" />
+						</p:inputText>
+					</div>
 					
-					<p:outputLabel value="Email:" for="email" />
-					<p:inputText id="email" value="#{usuarioBean.usuario.email}"
-					 required="true"  requiredMessage="**Email é obrigatório">
-					 	<f:passThroughAttribute name="type" value="email"/>
-					 </p:inputText>
+					<div class="p-field">
+						<p:outputLabel value="Senha:" for="senha" />
+						<p:password id="senha" value="#{usuarioBean.usuario.senha}"	toggleMask="true" redisplay="true" />
+					</div>
+<!-- 						<p:commandButton value="Login" action="#{usuarioBean.login}" update="@form" process="@form" />  -->
+				</div>
+			</div>
 					
-					<p:outputLabel value="Senha:" for="senha" />
-					<p:password id="senha" value="#{usuarioBean.usuario.senha}" toggleMask="true" redisplay="true"/>
+		
+        <div class="p-col-2">
+            <p:divider layout="vertical">
+                <b>OR</b>
+            </p:divider>
+        </div>
+        <div class="p-col-5 p-d-flex p-ai-center p-jc-center">
+<!--             <p:commandButton type="button" value="Logar!" action="#{usuarioBean.login}" icon="pi pi-user-plus" class="ui-button-success" update="@form" process="@form" /> -->
+        </div>
+	</div>
 
-					<p:commandButton value="Login" action="#{usuarioBean.login}" update="@form" process="@form" />
-				</h:panelGrid>
-			</p:fieldset>
-		</h:form>
-	
-	
-	
-	
-	
-	</ui:define>
+
+
+
+
+<!-- 						<h:form id="login"> -->
+<!-- 							<p:messages id="login" /> -->
+<!-- 							<p:fieldset legend="login"> -->
+<!-- 								<h:panelGrid columns="2"> -->
+
+<!-- 									<p:outputLabel value="Email:" for="email" /> -->
+<!-- 									<p:inputText id="email" value="#{usuarioBean.usuario.email}" -->
+<!-- 										required="true" requiredMessage="**Email é obrigatório"> -->
+<!-- 										<f:passThroughAttribute name="type" value="email" /> -->
+<!-- 									</p:inputText> -->
+
+<!-- 									<p:outputLabel value="Senha:" for="senha" /> -->
+<!-- 									<p:password id="senha" value="#{usuarioBean.usuario.senha}" -->
+<!-- 										toggleMask="true" redisplay="true" /> -->
+
+<!-- 									<p:commandButton value="Login" action="#{usuarioBean.login}" -->
+<!-- 										update="@form" process="@form" /> -->
+<!-- 								</h:panelGrid> -->
+<!-- 							</p:fieldset> -->
+<!-- 						</h:form>
+</ui:define> -->
+</h:form>
+</ui:define>
 	</ui:composition>
 
 </html>

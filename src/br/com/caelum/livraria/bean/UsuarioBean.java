@@ -43,7 +43,9 @@ public class UsuarioBean {
 	}
 
 	 
-	
+	public void teste() {
+		
+	}
 	public String login() {
 		
 		Usuario usuarioLogin = verificaCredenciaisInformadas();
