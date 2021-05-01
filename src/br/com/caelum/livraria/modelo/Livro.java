@@ -1,8 +1,12 @@
 package br.com.caelum.livraria.modelo;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -28,11 +32,36 @@ public class Livro implements Serializable {
 	private String titulo;
 	private String isbn;
 	private double preco;
+	private String categoria;
+	private String responsavelCadastro;
 	@Temporal(TemporalType.DATE)
 	private Calendar dataLancamento = Calendar.getInstance();
+	//@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.DATE)
+	private Date dataCadastro;
+	
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Autor> autores = new ArrayList<Autor>();
+
+	
+	
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro() {
+		SimpleDateFormat formatter= new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date(System.currentTimeMillis());
+		String dataFormatada = formatter.format(date);
+		Date dateFinal;
+		try {
+			dateFinal = new SimpleDateFormat("dd/MM/yyyy").parse(dataFormatada);
+			this.dataCadastro = dateFinal;
+		} catch (ParseException e) {
+			this.dataCadastro = null;
+		}
+	}
 
 	public List<Autor> getAutores() {
 		return autores;
@@ -89,5 +118,22 @@ public class Livro implements Serializable {
 		this.dataLancamento = dataLancamento;
 	}
 
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
+
+	public String getResponsavelCadastro() {
+		return responsavelCadastro;
+	}
+
+	public void setResponsavelCadastro(String responsavelCadastro) {
+		this.responsavelCadastro = responsavelCadastro;
+	}
+
+	
 
 }

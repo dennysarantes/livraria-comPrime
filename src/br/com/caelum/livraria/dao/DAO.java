@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 
 import br.com.caelum.livraria.modelo.Usuario;
@@ -72,6 +73,17 @@ public class DAO<T> {
 		return instancia;
 	}
 
+	public List<String> buscaCategorias (){
+		EntityManager em = new JPAUtil().getEntityManager();
+		List<String> categorias;
+		
+		Query query = em.createQuery("SELECT DISTINCT l.categoria FROM Livro l");
+		categorias = query.getResultList();
+		em.close();
+		
+		return categorias;
+	}
+	
 	public Usuario buscaPorNomeSenha(String email, String senha) {
 		EntityManager em = new JPAUtil().getEntityManager();
 		

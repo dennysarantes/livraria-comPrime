@@ -6,133 +6,186 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
+
+<style type="text/css">
+    .value {
+        font-weight: bold;
+    }
+</style>
+
 <ui:composition template="_template.xhtml">
 
+
+
 	<ui:define name="titulo">
-	Novo Livro
+	
 	</ui:define>
 
 
 	<ui:define name="conteudo">
+	
+	
 
-
-		<h:outputText value="Usuário: #{sessionScope['usuario'].email}" />
+		
 		<br />
 		<br />
-		<h:form>
+		<h:form id="formNovoLivro">
 
-			<h:messages id="messages" />
-			<fieldset>
-				<legend>Dados do Livro</legend>
+			<p:messages id="messages" />
+			<p:fieldset legend="Dados do Livro">
 
-				<h:panelGrid columns="2">
+				<p:panelGrid columns="2">
 
-					<h:outputLabel value="Titulo:" for="titulo" />
-					<h:inputText id="titulo" value="#{livroBean.livro.titulo}"
+					<p:outputLabel value="Titulo:" for="titulo" />
+					<p:inputText id="titulo" value="#{livroBean.livro.titulo}"
 						required="true" requiredMessage="Título obrigatório"
 						validatorMessage="O título deve possuir no máx 40 caracteres">
 						<f:validateLength maximum="40" />
 						<f:ajax event="blur" render="messages" />
-					</h:inputText>
+					</p:inputText>
 
-					<h:outputLabel value="ISBN:" for="isbn" />
-					<h:inputText id="isbn" value="#{livroBean.livro.isbn}"
-						validator="#{livroBean.comecaComDigitoUm}" required="true"
-						requiredMessage="Número ISBN é obrigatório (Começa com 1)" />
+					<p:outputLabel for="@next" value="Categoria" />
+					<p:selectOneMenu id="categoria"
+						value="#{livroBean.livro.categoria}">
+						<f:selectItem itemLabel="Selecione uma categoria" itemValue="#{null}" noSelectionOption="true" />
+						<f:selectItem itemLabel="Terror" itemValue="terror" />
+						<f:selectItem itemLabel="Ficcção" itemValue="ficcao" />
+						<f:selectItem itemLabel="Romance" itemValue="romance" />
+					</p:selectOneMenu>
 
-					<h:outputLabel value="Preço:" for="preco" />
-					<h:inputText id="preco" value="#{livroBean.livro.preco}"
-						required="true">
-						<!-- 				<f:validateDoubleRange minimum="0" maximum="150.0"/> -->
-						<f:convertNumber type="currency" locale="pt_BR" pattern="R$ #0.00" />
-					</h:inputText>
+					<p:outputLabel for="isbn" value="ISBN:" />
+						<p:inputMask id="isbn" value="#{livroBean.livro.isbn}" 
+							mask="1999-999-999" required="true" validateMask="true" 
+							requiredMessage="Número ISBN é obrigatório" render="messages">
+						</p:inputMask>
 
-					<h:outputLabel value="Data de Lançamento:" for="dataLancamento" />
-					<h:inputText id="dataLancamento"
-						value="#{livroBean.livro.dataLancamento.time}">
-						<f:convertDateTime pattern="dd/MM/yyyy"
-							timeZone="America/Sao_Paulo" />
-					</h:inputText>
-				</h:panelGrid>
-			</fieldset>
-			<br />
-			<br />
-			<fieldset>
-				<legend>Dados do autor</legend>
-				<h:outputLabel value="Selecione um autor:" for="autorAjax" />
-				<h:selectOneMenu value="#{livroBean.autorId}" id="autorAjax">
-					<f:selectItems value="#{livroBean.autores}" var="autor"
+					<p:outputLabel for="preco" value="Preço:" />
+					<p:inputNumber id="preco" value="#{livroBean.livro.preco}"
+						symbol="R$ " symbolPosition="p" decimalSeparator=","
+						thousandSeparator="." minValue="1" required="true" requiredMessage="Preço é obrigatório"/>
+
+					<p:outputLabel for="dataLancamento" value="Data de Lançamento:"/>
+         			<p:calendar id="dataLancamento" value="#{livroBean.livro.dataLancamento.time}" 
+         			locale="pt_BR" pattern="dd-MM-yyyy"  mask="true" showOn="button"/>
+
+					
+				</p:panelGrid>
+			</p:fieldset>
+		
+			
+		
+			<p:fieldset legend="Dados do autor">
+			
+				<table>
+				<tr>
+				<td>
+				 <p:selectOneMenu  
+				 					id="hideNoselectionOption" value="#{livroBean.autorId}"
+	                                hideNoSelectionOption="#{not empty livroBean.autorId}">
+	                    <p:ajax update="@this" process="@this"/>
+	                    <f:selectItem itemLabel="Selecione um autor" itemValue="#{null}" noSelectionOption="true"/>
+	                    <f:selectItems value="#{livroBean.autores}" var="autor"
 						itemLabel="#{autor.nome}" itemValue="#{autor.id}" />
-				</h:selectOneMenu>
-
-				<h:commandButton value="Selecionar autor"
-					action="#{livroBean.gravarAutor}">
-					<f:ajax execute="autorAjax" render="autoresCadastrados" />
-				</h:commandButton>
-				<!-- 			<h:commandButton value="Cadastrar novo autor" -->
-				<!-- 				action="autor?faces-redirect=true" /> -->
-				<br />
-				<h:commandLink value="Cadastrar novo autor"
-					action="#{livroBean.formAutor}" immediate="true" id="linkAutor" />
-
-
-				<h:dataTable value="#{livroBean.autoresDoLivro}" var="autor"
-					id="autoresCadastrados">
-					<h:column>
+	                </p:selectOneMenu>
+	            </td>
+	            <td>    
+				<p:commandButton process="@this" icon="pi pi-check" value="Associar autor ao livro"
+					action="#{livroBean.gravarAutor}"  update="autoresCadastrados">
+<!-- 					<f:ajax execute="autorAjax" render="autoresCadastrados" /> -->
+				</p:commandButton>
+				</td>
+				<td>
+				<p:commandButton process="@this" icon="pi pi-check" styleClass="ui-button-outlined ui-button-secondary" 
+								value="ou cadastrar novo autor..." action="#{livroBean.formAutor}"  id="linkAutor" />
+				</td>
+				</tr>
+				</table>
+				
+				<p:dataTable value="#{livroBean.autoresDoLivro}" var="autor"
+					id="autoresCadastrados" emptyMessage="Nenhum autor foi associado a este livro até o momento">
+					<p:column>
 						<f:facet name="header">
-							<h:outputLabel value="Autores cadastrados para este livro" />
+							<p:outputLabel value="Autores cadastrados para este livro" />
 						</f:facet>
-						<h:outputText value="#{autor.nome}" />
-					</h:column>
-					<h:column>
-						<h:commandLink value="excluir" action="#{livroBean.excluirAutor}"
-							id="excluir">
-							<f:ajax execute="excluir" render="@all" />
-							<f:param name="autorParaExcluir" value="#{autor.nome}" />
-						</h:commandLink>
-					</h:column>
-
-				</h:dataTable>
-			</fieldset>
+						<h:outputText value="#{autor.nome}" id="nomeAutor" />
+					
+						<p:commandButton style="margin-left:10px" update="@this autoresCadastrados" icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-outlined" 
+								process="@this" value="excluir" action="#{livroBean.excluirAutor(autor)}">
+						</p:commandButton>
+					
+				</p:column>	
+				</p:dataTable>
+			</p:fieldset>
 			
 			<br />
-			<h:commandButton value="Gravar livro" action="#{livroBean.gravar}">
-				<f:ajax execute="@form"
-					render="@form :formListaTodosLivros:tabelaLivros" />
-			</h:commandButton>
+			<p:commandButton process="@this formNovoLivro" icon="pi pi-check" update="formNovoLivro :formListaTodosLivros:tabelaLivros" 
+			styleClass="ui-button-success" value="Gravar livro" action="#{livroBean.gravar}">
+			</p:commandButton>
 		</h:form>
 		<br />
 		<br />
+		
+		
+		<div class="card">
 		<h:form id="formListaTodosLivros">
-			<fieldset>
-				<legend>Todos os livros já cadastrados</legend>
-				<h:dataTable value="#{livroBean.livros}" var="livro"
-					id="tabelaLivros">
-					<h:column>
-						<f:facet name="header">Titulo</f:facet>
+		 
+			<p:fieldset legend="Todos os livros já cadastrados">
+			<p:growl id="confirm" showDetail="true"/>
+				
+				<p:dataTable value="#{livroBean.livros}" var="livro" widgetVar="tabelaLivros"
+					id="tabelaLivros" rows="5" paginator="true" >
+					<p:column headerText="Título" sortBy="#{livro.titulo}" filterMatchMode="contains" filterBy="#{livro.titulo}">
 						<h:outputText value="#{livro.titulo}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">ISBN</f:facet>
+					</p:column>
+					<p:column headerText="Categoria" sortBy="#{livro.categoria}">
+							 	<h:outputText value="#{livro.categoria}" />
+					</p:column>
+					<p:column headerText="Cód Isbn" sortBy="#{livro.isbn}">
 						<h:outputText value="#{livro.isbn}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">Preço</f:facet>
+					</p:column>
+					<p:column headerText="Preço" sortBy="#{livro.preco}">
 						<h:outputText value="#{livro.preco}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">Remover</f:facet>
-						<h:commandLink value="remover"
-							action="#{livroBean.excluirLivro(livro)}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">Editar</f:facet>
-						<h:commandLink value="editar"
-							action="#{livroBean.carregarLivro(livro)}" />
-					</h:column>
-				</h:dataTable>
-			</fieldset>
+					</p:column>
+					<p:column headerText="Data de lançamento" sortBy="#{livro.dataLancamento}">
+						<p:calendar style="width:10px !important" value="#{livro.dataLancamento.time}"  disabled="true" />
+					</p:column>
+					<p:column>
+
+					<p:commandButton style="margin-left:10px" icon="pi pi-trash" value="remover" update=":formListaTodosLivros:confirm"
+							process="@this" action="#{livroBean.excluirLivroPergunta}" >
+						<p:confirm  header="Tem certeza?" message="Você quer deletar este livro?" icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+						<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+						<p:commandButton value="Sim" action="#{livroBean.excluirLivro(livro)}" 
+							styleClass="ui-confirmdialog-yes ui-button-flat"
+							process="@this" update="tabelaLivros"/>
+					</p:confirmDialog>
+					
+					</p:column>
+					
+					<p:column>
+						<p:commandButton icon="pi pi-pencil" value="editar" 
+							action="#{livroBean.carregarLivro(livro)}" process="@this" update=":formNovoLivro" />
+					</p:column>
+				</p:dataTable>
+			</p:fieldset>
+					
 		</h:form>
+		</div>
+<script language="javascript">
+    function check() {
+        alert("Entered");
+        confirmDlg.show();
+        alert("Working!!");
+        
+        
+        
+    }
+</script>
+		
+
 	</ui:define>
 </ui:composition>
 

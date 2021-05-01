@@ -14,7 +14,7 @@
 	</f:metadata>
 	
 	<ui:define name="titulo">
-	<p:outputPanel>Cadastro de Autor</p:outputPanel>
+<!-- 	<p:outputPanel>Cadastro de Autor</p:outputPanel> -->
 	</ui:define>
 	
 	<ui:define name="conteudo">
@@ -44,25 +44,33 @@
 					
 					<p:commandButton value="Gravar" action="#{autorBean.gravar}" process="@form" update="@form :formListaTodosLivros"/>
 				</h:panelGrid>
+				
+				
+				
+				
 			</p:fieldset>
 		</h:form>
-	<h:form id="formListaTodosLivros">
-	<p:fieldset legend="Autores já cadastrados">
-		<h:dataTable value="#{autorBean.autores}" var="autor" id="tabelaAutores">
-			<h:column>
-				<f:facet name="header">Nome</f:facet>
-				<h:outputText value="#{autor.nome}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Editar</f:facet>
-				<p:commandLink value="editar" action="#{autorBean.carregaAutor(autor)}" update=":formAutor"/>
-			</h:column>
-			<h:column>
-				<f:facet name="header">Excluir</f:facet>
-				<p:commandLink value="excluir" action="#{autorBean.excluir(autor)}" update="@form"/>
-			</h:column>
-		</h:dataTable>
-	</p:fieldset>
+		
+		
+		<h:form id="formListaTodosLivros">
+		
+		<p:dataList value="#{autorBean.autores}" var="autor" id="tabelaAutores2" type="definition">
+			<f:facet name="header">
+			Lista de autores cadastrados
+			</f:facet>
+				<span>
+				<p:commandButton style="margin-bottom:2px;margin-right:2px" icon="pi pi-pencil" 
+							styleClass="rounded-button ui-button-outlined"  
+							action="#{autorBean.carregaAutor(autor)}" update=":formAutor"/>
+				</span>
+				<span>
+				<p:commandButton style="margin-bottom:2px; margin-right:10px" icon="pi pi-trash" 
+						styleClass="rounded-button ui-button-danger ui-button-outlined" 
+						 action="#{autorBean.excluir(autor)}" update="@form"/>
+				</span>
+				<b>#{autor.nome}</b> (#{autor.email})
+		</p:dataList>
+		
 	</h:form>
 	
 	</ui:define>

@@ -19,6 +19,15 @@ public class Usuario implements Serializable{
 	private Integer id;
 	private String email;
 	private String senha;
+	private String nome;
+	
+	
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 	public Integer getId() {
 		return id;
 	}

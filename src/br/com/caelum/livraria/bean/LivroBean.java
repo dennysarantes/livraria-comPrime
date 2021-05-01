@@ -1,7 +1,6 @@
 package br.com.caelum.livraria.bean;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +11,12 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
+import org.primefaces.PrimeFaces;
+
 import br.com.caelum.livraria.dao.DAO;
 import br.com.caelum.livraria.modelo.Autor;
 import br.com.caelum.livraria.modelo.Livro;
+import br.com.caelum.livraria.modelo.Usuario;
 
 @ManagedBean
 @ViewScoped
@@ -24,12 +26,52 @@ public class LivroBean {
 	private List<Livro> livros;
 	// private List<Autor> autores = new DAO<Autor>(Autor.class).listaTodos();
 	private Integer autorId;
+	private Autor autor = new Autor();
+	private Usuario usuarioLogado = new Usuario();
+	private List<String> categorias;
+	private List<Livro> livrosFiltrados;
+	
+	
+	public List<Livro> getLivrosFiltrados() {
+		return livrosFiltrados;
+	}
 
-	
-	
-	
+	public void setLivrosFiltrados(List<Livro> livrosFiltrados) {
+		this.livrosFiltrados = livrosFiltrados;
+	}
+
+	public List<String> getCategorias() {
+		List<String> categorias = new DAO<String>(String.class).buscaCategorias();		
+		return categorias;
+	}
+
+	public void setCategorias(List<String> categorias) {
+		this.categorias = categorias;
+	}
+
+	public Usuario getUsuarioLogado() {
+		return usuarioLogado;
+	}
+
+	public void setUsuarioLogado(Usuario usuarioLogado) {
+		this.usuarioLogado = usuarioLogado;
+	}
+
+	public Autor getAutor() {
+		return autor;
+	}
+
+	public void setAutor(Autor autor) {
+		this.autor = autor;
+	}
+
 	public List<Livro> getLivros() {
-		return new DAO<Livro>(Livro.class).listaTodos();
+		DAO<Livro> dao = new DAO<Livro>(Livro.class);
+		if(this.livros == null) {
+			this.livros = dao.listaTodos();
+		}
+		
+		return livros; 
 	}
 
 	public void setLivros(List<Livro> livros) {
@@ -45,6 +87,12 @@ public class LivroBean {
 		this.autorId = autorId;
 	}
 
+	
+	
+	public void setLivro(Livro livro) {
+		this.livro = livro;
+	}
+
 	public Livro getLivro() {
 		//livro.setPreco(1.0);
 		return livro;
@@ -57,10 +105,20 @@ public class LivroBean {
 
 	public String gravar() {
 		System.out.println("Gravando livro " + this.livro.getTitulo());
-
+		System.out.println("ISBN e preço do livro a ser gravado: " + this.livro.getIsbn() + " " + this.livro.getPreco());
+		
+		try {
+			usuarioLogado = (Usuario)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
+			livro.setResponsavelCadastro(usuarioLogado.getNome());
+			livro.setDataCadastro();
+		} catch (Exception e) {
+			System.out.println("WARN [" + LocalDateTime.now() + "] erro ao obter usuário");
+		}
+		
 		if (livro.getAutores().isEmpty()) {
 			//throw new RuntimeException("Livro deve ter pelo menos um Autor.");
 			FacesContext.getCurrentInstance().addMessage("autor", new FacesMessage("O livro deve conter ao menos um autor"));
+			return null;
 		}else {
 			if (this.livro.getId() == null) {
 				try {
@@ -122,7 +180,19 @@ public class LivroBean {
 		return autoresDoLivro;
 	}
 
-	public void excluirAutor() {
+	public void excluirAutor(Autor autor) {
+		List<Autor> autoresDoLivro = livro.getAutores();
+
+		for (int i = 0; i < autoresDoLivro.size(); i++) {
+			if (autoresDoLivro.get(i).getNome().equals(autor.getNome())) {
+				livro.excluirAutor(autoresDoLivro.get(i));
+				//System.out.println("Autor " + autoresDoLivro.get(i).getNome() + " excluído com sucesso!");
+			}
+		}
+	}
+	
+	
+	public void excluirAutorOld() {
 		
 		FacesContext fc = FacesContext.getCurrentInstance();
 		Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
@@ -157,12 +227,23 @@ public class LivroBean {
 	
 	public void excluirLivro(Livro livro) {
 		
+		System.out.println("Livro a ser removido " + livro.getTitulo());
+		
 		new DAO<Livro>(Livro.class).remove(livro);
 		
 	}
 	public void carregarLivro(Livro livro) {
 		this.livro = livro;
 		
+	}
+	
+	public void excluirLivroPergunta() {
+		System.out.println("Entrou");
+		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "confirmado", "Livro excluído");
+        FacesContext.getCurrentInstance().addMessage(null, message);
+		
+		
+		//PrimeFaces.current().executeScript("check()");
 	}
 	
 	public void editarLivro() {
